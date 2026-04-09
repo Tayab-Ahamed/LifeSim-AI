@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { ChoiceOption, Scenario } from "../types/wealthcraft";
+import { ChoiceOption, Scenario, Stats } from "../types/wealthcraft";
 import ChoiceButtons from "./ChoiceButtons";
+import ScenarioComparison from "./ScenarioComparison";
 
 type ScenarioCardProps = {
   scenario: Scenario | null;
+  stats: Stats;
+  comparisonCount: 0 | 2 | 3 | 4;
   turn: number;
   maxTurns: number;
   isLoading: boolean;
@@ -14,6 +17,8 @@ type ScenarioCardProps = {
 
 const ScenarioCard: React.FC<ScenarioCardProps> = ({
   scenario,
+  stats,
+  comparisonCount,
   turn,
   maxTurns,
   isLoading,
@@ -59,6 +64,14 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
             onChoose={onChoose}
           />
 
+          {comparisonCount > 0 && (
+            <ScenarioComparison
+              scenario={scenario}
+              stats={stats}
+              personaCount={comparisonCount as 2 | 3 | 4}
+            />
+          )}
+
           <div className="custom-choice-shell">
             <button
               type="button"
@@ -80,7 +93,7 @@ const ScenarioCard: React.FC<ScenarioCardProps> = ({
                   placeholder="Example: I would ask for sponsorship first, then pay only if they reject it."
                 />
                 <p className="custom-helper">
-                  We’ll interpret your own strategy, convert it into realistic
+                  We'll interpret your own strategy, convert it into realistic
                   effects, and keep the simulation fair.
                 </p>
                 {error && <p className="error-copy">{error}</p>}

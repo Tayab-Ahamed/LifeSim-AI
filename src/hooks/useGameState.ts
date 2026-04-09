@@ -36,6 +36,7 @@ const DEFAULT_CONFIG: GameConfig = {
   provider: "openai",
   apiKey: "",
   model: "gpt-4.1-mini",
+  comparisonCount: 0,
 };
 
 const INITIAL_STATE = {
@@ -171,6 +172,7 @@ export const useGameState = () => {
     const nextHistoryEntry: HistoryEntry = {
       turn,
       scenarioId: scenario.id,
+      scenarioCategory: scenario.category,
       scenarioTitle: scenario.title,
       choiceText: choice.text,
       effect: choice.effect,

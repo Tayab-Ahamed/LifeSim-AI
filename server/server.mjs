@@ -1,7 +1,21 @@
+import "dotenv/config";
 import { createServer } from "node:http";
 import { URL } from "node:url";
 
 const port = Number(process.env.API_PORT || 8787);
+const allowedCategories = [
+  "career",
+  "housing",
+  "family",
+  "health",
+  "debt",
+  "investment",
+  "transport",
+  "cashflow",
+  "social",
+  "education",
+  "insurance",
+];
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, Math.round(Number(value) || 0)));
 
@@ -67,6 +81,11 @@ const normalizeEffect = (effect = {}) => ({
   career: clamp(effect.career, -15, 15),
 });
 
+const normalizeCategory = (category) => {
+  const value = String(category || "").toLowerCase().trim();
+  return allowedCategories.includes(value) ? value : "cashflow";
+};
+
 const normalizeScenario = (payload) => {
   const choices = Array.isArray(payload?.choices) ? payload.choices.slice(0, 3) : [];
   if (choices.length !== 3) {
@@ -75,6 +94,7 @@ const normalizeScenario = (payload) => {
 
   return {
     id: `ai-${Date.now()}`,
+    category: normalizeCategory(payload?.category),
     title: String(payload?.title || "Life Decision"),
     scenario: String(payload?.scenario || "A financial choice is in front of you."),
     choices: choices.map((choice, index) => ({
@@ -231,7 +251,7 @@ const callProvider = async ({ config, system, user }) => {
 
 const scenarioPrompt = ({ playerName, stats, turn, history, traits }) => ({
   system:
-    "You are LifeSim AI, a financial life simulator. Generate one realistic, grounded life scenario with exactly 3 choices. Keep the effects modest, balanced, and plausible for a young adult navigating money and career decisions.",
+    "You are LifeSim AI, a financial life simulator. Generate one realistic, grounded life scenario with exactly 3 choices. Keep the effects modest, balanced, and plausible for a young adult navigating money and career decisions. Prioritize novelty: avoid repeating the same scenario families too close together.",
   user: JSON.stringify(
     {
       task: "Generate the next scenario and 3 choices.",
@@ -240,7 +260,11 @@ const scenarioPrompt = ({ playerName, stats, turn, history, traits }) => ({
       stats,
       traits,
       recentHistory: history.slice(-3),
+      recentCategories: history.slice(-2).map((entry) => entry.scenarioCategory),
+      usedCategories: [...new Set(history.map((entry) => entry.scenarioCategory))],
+      allowedCategories,
       format: {
+        category: "one of the allowed categories",
         title: "string",
         scenario: "string",
         choices: [
@@ -262,6 +286,8 @@ const scenarioPrompt = ({ playerName, stats, turn, history, traits }) => ({
         "Return exactly 3 choices.",
         "Make the scenario respond to the player's visible stats and hidden traits.",
         "Prefer realistic financial, career, family, housing, health, and lifestyle tradeoffs.",
+        "Avoid repeating the categories used in the last 2 turns unless there is no plausible alternative.",
+        "Prefer categories the player has not already seen in this run when possible.",
         "Do not create impossible or magical outcomes.",
       ],
     },

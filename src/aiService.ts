@@ -1,10 +1,13 @@
 import {
+  ChoiceComparison,
   ChoiceEffect,
   ChoiceOption,
   CustomChoiceRequest,
   FinalResult,
   HistoryEntry,
+  PersonaProfile,
   Scenario,
+  ScenarioCategory,
   StartingStyle,
   Stats,
   TraitDelta,
@@ -30,6 +33,61 @@ export const INITIAL_TRAITS: TraitScores = {
   risk: 50,
 };
 
+export const PERSONA_PROFILES: PersonaProfile[] = [
+  {
+    id: "balanced-planner",
+    label: "Balanced Planner",
+    description: "Protects stability, but still takes smart upside when it feels justified.",
+    traits: {
+      ambition: 56,
+      discipline: 66,
+      balance: 68,
+      empathy: 54,
+      adaptability: 58,
+      risk: 42,
+    },
+  },
+  {
+    id: "risk-runner",
+    label: "Risk Runner",
+    description: "Leans into growth and uncertainty, even when the pressure rises.",
+    traits: {
+      ambition: 78,
+      discipline: 48,
+      balance: 34,
+      empathy: 42,
+      adaptability: 64,
+      risk: 82,
+    },
+  },
+  {
+    id: "safety-builder",
+    label: "Safety Builder",
+    description: "Optimizes for runway, predictable bills, and downside protection.",
+    traits: {
+      ambition: 44,
+      discipline: 78,
+      balance: 72,
+      empathy: 48,
+      adaptability: 46,
+      risk: 24,
+    },
+  },
+  {
+    id: "community-first",
+    label: "Community First",
+    description: "Will take a hit personally if it helps people and keeps relationships strong.",
+    traits: {
+      ambition: 46,
+      discipline: 58,
+      balance: 60,
+      empathy: 84,
+      adaptability: 56,
+      risk: 36,
+    },
+  },
+];
+
 const STARTING_STYLE_EFFECTS: Record<StartingStyle, ChoiceEffect> = {
   balanced: { money: 0, debt: 0, stress: 0, happiness: 0, career: 0 },
   career: { money: 3000, debt: 0, stress: 5, happiness: -4, career: 8 },
@@ -38,6 +96,7 @@ const STARTING_STYLE_EFFECTS: Record<StartingStyle, ChoiceEffect> = {
 
 type ScenarioTemplate = {
   id: string;
+  category: ScenarioCategory;
   title: string;
   tags: string[];
   priority: number;
@@ -74,6 +133,7 @@ const emptyTraitDelta = (): TraitDelta => ({
 const scenarioTemplates: ScenarioTemplate[] = [
   {
     id: "promotion-relocation",
+    category: "career",
     title: "Promotion with a Price Tag",
     tags: ["career", "risk", "cashflow"],
     priority: 10,
@@ -100,6 +160,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "rent-hike",
+    category: "housing",
     title: "Rent Shock",
     tags: ["cashflow", "discipline", "adaptability"],
     priority: 16,
@@ -126,6 +187,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "family-emergency",
+    category: "family",
     title: "Family Emergency",
     tags: ["empathy", "cashflow", "stability"],
     priority: 18,
@@ -152,6 +214,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "upskill-course",
+    category: "education",
     title: "Skill Upgrade Window",
     tags: ["career", "discipline", "ambition"],
     priority: 12,
@@ -178,6 +241,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "burnout-week",
+    category: "health",
     title: "Burnout Warning",
     tags: ["balance", "stress", "career"],
     priority: 14,
@@ -204,6 +268,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "layoff-rumor",
+    category: "career",
     title: "Layoff Rumors",
     tags: ["career", "discipline", "risk"],
     priority: 17,
@@ -230,6 +295,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "scooter-choice",
+    category: "transport",
     title: "Commute Upgrade",
     tags: ["comfort", "cashflow", "adaptability"],
     priority: 8,
@@ -256,6 +322,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "inflation-groceries",
+    category: "cashflow",
     title: "Inflation Bite",
     tags: ["cashflow", "discipline", "stress"],
     priority: 15,
@@ -282,6 +349,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "friend-startup",
+    category: "career",
     title: "Friend's Startup Pitch",
     tags: ["risk", "ambition", "career"],
     priority: 9,
@@ -308,6 +376,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "credit-card-offer",
+    category: "debt",
     title: "Easy EMI Temptation",
     tags: ["debt", "discipline", "risk"],
     priority: 13,
@@ -334,6 +403,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "windfall-bonus",
+    category: "cashflow",
     title: "Bonus Month",
     tags: ["cashflow", "discipline", "career"],
     priority: 11,
@@ -360,6 +430,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "debt-refinance",
+    category: "debt",
     title: "Debt Reset Option",
     tags: ["debt", "discipline", "stress"],
     priority: 19,
@@ -386,6 +457,7 @@ const scenarioTemplates: ScenarioTemplate[] = [
   },
   {
     id: "investment-opportunity",
+    category: "investment",
     title: "Investment Opportunity",
     tags: ["risk", "discipline", "wealth"],
     priority: 10,
@@ -408,6 +480,145 @@ const scenarioTemplates: ScenarioTemplate[] = [
         text: "Skip it and keep building your safety buffer.",
         note: "Protects stability, but you may miss upside.",
         effect: { money: 0, debt: 0, stress: -1, happiness: 0, career: 0 },
+      },
+    ],
+  },
+  {
+    id: "salary-negotiation",
+    category: "career",
+    title: "Salary Review Window",
+    tags: ["career", "cashflow", "ambition"],
+    priority: 12,
+    score: ({ stats, turn }) =>
+      stats.career >= 55 && turn >= 2 ? 16 : stats.career >= 45 ? 9 : 4,
+    buildScenario: () =>
+      "Your annual review is coming up, and this may be your best chance to ask for a raise. You have solid contributions, but asking too aggressively could backfire.",
+    choices: [
+      {
+        text: "Ask directly for a meaningful raise and promotion path.",
+        note: "Higher upside if it lands, more pressure if it does not.",
+        effect: { money: 3500, debt: 0, stress: 5, happiness: 1, career: 8 },
+      },
+      {
+        text: "Make a balanced case for better pay with evidence.",
+        note: "Measured ask with strong odds of a fair outcome.",
+        effect: { money: 2000, debt: 0, stress: 2, happiness: 2, career: 5 },
+      },
+      {
+        text: "Say nothing for now and focus on stability.",
+        note: "Safe in the short term, but you may leave money on the table.",
+        effect: { money: 0, debt: 0, stress: -1, happiness: 0, career: -1 },
+      },
+    ],
+  },
+  {
+    id: "insurance-gap",
+    category: "insurance",
+    title: "Insurance Gap",
+    tags: ["health", "discipline", "cashflow"],
+    priority: 11,
+    score: ({ stats, turn }) =>
+      stats.money >= 9000 && turn >= 2 ? 14 : stats.money >= 5000 ? 9 : 5,
+    buildScenario: () =>
+      "You discover your current health coverage has gaps that could become expensive later. Upgrading now costs money, but ignoring it increases future risk.",
+    choices: [
+      {
+        text: "Upgrade to a better plan now.",
+        note: "Higher monthly cost, lower downside if something goes wrong.",
+        effect: { money: -2500, debt: 0, stress: -2, happiness: 1, career: 0 },
+      },
+      {
+        text: "Keep the cheaper plan and build a health buffer yourself.",
+        note: "Flexible and disciplined, but still exposed.",
+        effect: { money: 1500, debt: 0, stress: 2, happiness: -1, career: 0 },
+      },
+      {
+        text: "Delay the decision and hope nothing urgent happens.",
+        note: "No cost now, but risk stays hidden.",
+        effect: { money: 0, debt: 0, stress: 3, happiness: 0, career: 0 },
+      },
+    ],
+  },
+  {
+    id: "parents-support",
+    category: "family",
+    title: "Parents Need Support",
+    tags: ["family", "empathy", "cashflow"],
+    priority: 13,
+    score: ({ turn }) => (turn >= 3 ? 16 : 8),
+    buildScenario: () =>
+      "Your parents need help with a recurring household expense for a few months. You can step in fully, help partially, or help them restructure the problem.",
+    choices: [
+      {
+        text: "Cover the full amount for the next few months.",
+        note: "Strong support, heavier strain on your own buffer.",
+        effect: { money: -4500, debt: 0, stress: 4, happiness: 4, career: 0 },
+      },
+      {
+        text: "Contribute part of it and help them reduce the expense.",
+        note: "Supportive without absorbing the whole burden.",
+        effect: { money: -2200, debt: 0, stress: 2, happiness: 3, career: 0 },
+      },
+      {
+        text: "Offer guidance only and protect your own runway.",
+        note: "Financially safer for you, emotionally harder.",
+        effect: { money: 0, debt: 0, stress: 3, happiness: -2, career: 0 },
+      },
+    ],
+  },
+  {
+    id: "major-repair",
+    category: "transport",
+    title: "Major Repair Surprise",
+    tags: ["transport", "cashflow", "debt"],
+    priority: 12,
+    score: ({ stats, turn }) =>
+      stats.money >= 7000 && turn >= 2 ? 15 : stats.money >= 3000 ? 10 : 6,
+    buildScenario: () =>
+      "Something important breaks unexpectedly: your laptop, phone, or commute vehicle. Replacing or repairing it is now unavoidable.",
+    choices: [
+      {
+        text: "Pay cash and solve it immediately.",
+        note: "Quick fix, but your savings take the hit.",
+        effect: { money: -5000, debt: 0, stress: -1, happiness: 1, career: 1 },
+      },
+      {
+        text: "Use an EMI plan so you can spread the cost.",
+        note: "Lower immediate pain, more future drag.",
+        effect: { money: -1200, debt: 3500, stress: 3, happiness: 0, career: 0 },
+      },
+      {
+        text: "Patch it temporarily and delay the bigger spend.",
+        note: "Cheaper now, but less reliable day to day.",
+        effect: { money: -800, debt: 0, stress: 4, happiness: -1, career: -1 },
+      },
+    ],
+  },
+  {
+    id: "wedding-pressure",
+    category: "social",
+    title: "Social Spending Pressure",
+    tags: ["social", "cashflow", "balance"],
+    priority: 9,
+    score: ({ turn, stats }) =>
+      turn >= 3 && stats.happiness < 65 ? 13 : turn >= 3 ? 9 : 5,
+    buildScenario: () =>
+      "A close friend invites you to an expensive wedding trip. You want to show up, but the cost is real and your budget is already carrying other priorities.",
+    choices: [
+      {
+        text: "Go fully and spend for the full experience.",
+        note: "Memories now, tighter cash later.",
+        effect: { money: -4200, debt: 0, stress: 1, happiness: 5, career: 0 },
+      },
+      {
+        text: "Attend in a simpler way and cap the budget.",
+        note: "Keeps the relationship strong without overspending.",
+        effect: { money: -1800, debt: 0, stress: 0, happiness: 3, career: 0 },
+      },
+      {
+        text: "Skip the trip and explain your constraints honestly.",
+        note: "Financially smart, socially uncomfortable.",
+        effect: { money: 0, debt: 0, stress: 2, happiness: -2, career: 0 },
       },
     ],
   },
@@ -459,6 +670,96 @@ export const applyChoiceEffect = (stats: Stats, effect: ChoiceEffect): Stats => 
   happiness: clamp(stats.happiness + effect.happiness, 0, 100),
   career: clamp(stats.career + effect.career, 0, 100),
 });
+
+export const adjustEffectForPersona = ({
+  effect,
+  category,
+  traits,
+}: {
+  effect: ChoiceEffect;
+  category: ScenarioCategory | string;
+  traits: TraitScores;
+}): ChoiceEffect => {
+  const ambitionFactor = (traits.ambition - 50) / 50;
+  const disciplineFactor = (traits.discipline - 50) / 50;
+  const balanceFactor = (traits.balance - 50) / 50;
+  const empathyFactor = (traits.empathy - 50) / 50;
+  const adaptabilityFactor = (traits.adaptability - 50) / 50;
+  const riskFactor = (traits.risk - 50) / 50;
+
+  let money = effect.money + effect.money * 0.06 * disciplineFactor;
+  let debt = effect.debt - effect.debt * 0.08 * disciplineFactor;
+  let stress = effect.stress + effect.stress * 0.08 * riskFactor - effect.stress * 0.08 * balanceFactor;
+  let happiness =
+    effect.happiness +
+    effect.happiness * 0.06 * balanceFactor +
+    (category === "social" || category === "family" ? 2 * empathyFactor : 0);
+  let career = effect.career + effect.career * 0.08 * ambitionFactor;
+
+  if (category === "investment") {
+    money += effect.money * 0.05 * riskFactor;
+    stress += 2 * riskFactor;
+  }
+
+  if (category === "debt") {
+    debt += effect.debt * 0.06 * riskFactor;
+    money += effect.money * 0.03 * disciplineFactor;
+  }
+
+  if (category === "career") {
+    career += effect.career * 0.05 * ambitionFactor;
+    stress += 2 * ambitionFactor;
+  }
+
+  if (category === "housing" || category === "transport") {
+    stress -= 2 * adaptabilityFactor;
+  }
+
+  return {
+    money: clamp(money, -7000, 7000),
+    debt: clamp(debt, -6000, 6000),
+    stress: clamp(stress, -15, 15),
+    happiness: clamp(happiness, -15, 15),
+    career: clamp(career, -15, 15),
+  };
+};
+
+const describeProjectedOutcome = ({
+  effect,
+  persona,
+}: {
+  effect: ChoiceEffect;
+  persona: PersonaProfile;
+}) => {
+  const strongUpsides = [];
+  const strongCosts = [];
+
+  if (effect.money >= 2000) strongUpsides.push("cash runway");
+  if (effect.career >= 5) strongUpsides.push("career upside");
+  if (effect.happiness >= 4) strongUpsides.push("quality of life");
+  if (effect.debt <= -1500) strongUpsides.push("debt relief");
+  if (effect.stress <= -4) strongUpsides.push("lower stress");
+
+  if (effect.money <= -2000) strongCosts.push("savings pressure");
+  if (effect.career <= -3) strongCosts.push("slower growth");
+  if (effect.happiness <= -3) strongCosts.push("comfort loss");
+  if (effect.debt >= 1500) strongCosts.push("future debt drag");
+  if (effect.stress >= 4) strongCosts.push("higher stress");
+
+  if (strongUpsides.length === 0 && strongCosts.length === 0) {
+    return `${persona.label} gets a mild outcome with no dramatic swing either way.`;
+  }
+
+  if (strongCosts.length === 0) {
+    return `${persona.label} benefits mostly through ${strongUpsides.join(" and ")}.`;
+  }
+
+  if (strongUpsides.length === 0) {
+    return `${persona.label} pays mostly through ${strongCosts.join(" and ")}.`;
+  }
+
+  return `${persona.label} gains ${strongUpsides.join(" and ")}, but gives up ${strongCosts.join(" and ")}.`;
+};
 
 export const applyTraitDelta = (
   traits: TraitScores,
@@ -573,6 +874,27 @@ const getTraitScenarioBoost = (tags: string[], traits: TraitScores) =>
     return sum + (boostFn ? boostFn(traits) : 0);
   }, 0);
 
+const getRecentCategoryPenalty = (
+  category: ScenarioCategory,
+  history: HistoryEntry[]
+) => {
+  const recentCategories = history.slice(-2).map((entry) => entry.scenarioCategory);
+  if (recentCategories.includes(category)) {
+    return 28;
+  }
+
+  const categoryCount = history.filter(
+    (entry) => entry.scenarioCategory === category
+  ).length;
+  return categoryCount * 5;
+};
+
+const getFreshCategoryBonus = (
+  category: ScenarioCategory,
+  history: HistoryEntry[]
+) =>
+  history.some((entry) => entry.scenarioCategory === category) ? 0 : 9;
+
 export const generateScenario = async ({
   playerName,
   stats,
@@ -599,6 +921,8 @@ export const generateScenario = async ({
         : template.priority +
           template.score({ stats, turn }) +
           getTraitScenarioBoost(template.tags, traits) +
+          getFreshCategoryBonus(template.category, history) -
+          getRecentCategoryPenalty(template.category, history) +
           (Math.random() * jitter * 2 - jitter),
     }))
     .filter((entry) => Number.isFinite(entry.score))
@@ -608,6 +932,7 @@ export const generateScenario = async ({
 
   return {
     id: chosenTemplate.id,
+    category: chosenTemplate.category,
     title: chosenTemplate.title,
     scenario: chosenTemplate.buildScenario({ playerName, stats, turn }),
     choices: chosenTemplate.choices.map((choice, index) => ({
@@ -797,4 +1122,38 @@ export const generateFutureResult = async ({
     advice,
     traitSummary: buildTraitSummary(traits),
   };
+};
+
+export const buildChoiceComparisons = ({
+  scenario,
+  stats,
+  personaCount,
+}: {
+  scenario: Scenario;
+  stats: Stats;
+  personaCount: number;
+}): ChoiceComparison[] => {
+  const personas = PERSONA_PROFILES.slice(0, clamp(personaCount, 2, 4));
+
+  return scenario.choices.map((choice) => ({
+    choice,
+    comparisons: personas.map((persona) => {
+      const projectedEffect = adjustEffectForPersona({
+        effect: choice.effect,
+        category: scenario.category,
+        traits: persona.traits,
+      });
+      const projectedStats = applyChoiceEffect(stats, projectedEffect);
+
+      return {
+        persona,
+        projectedEffect,
+        projectedStats,
+        insight: describeProjectedOutcome({
+          effect: projectedEffect,
+          persona,
+        }),
+      };
+    }),
+  }));
 };

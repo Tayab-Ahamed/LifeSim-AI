@@ -111,6 +111,8 @@ const App: React.FC = () => {
               {phase === "playing" ? (
                 <ScenarioCard
                   scenario={scenario}
+                  stats={stats}
+                  comparisonCount={config.comparisonCount}
                   turn={turn}
                   maxTurns={maxTurns}
                   isLoading={isLoading}

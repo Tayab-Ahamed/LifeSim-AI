@@ -32,6 +32,19 @@ export type TraitDelta = {
   risk: number;
 };
 
+export type ScenarioCategory =
+  | "career"
+  | "housing"
+  | "family"
+  | "health"
+  | "debt"
+  | "investment"
+  | "transport"
+  | "cashflow"
+  | "social"
+  | "education"
+  | "insurance";
+
 export type ChoiceOption = {
   id: string;
   text: string;
@@ -44,6 +57,7 @@ export type ChoiceOption = {
 
 export type Scenario = {
   id: string;
+  category: ScenarioCategory | string;
   title: string;
   scenario: string;
   choices: ChoiceOption[];
@@ -52,6 +66,7 @@ export type Scenario = {
 export type HistoryEntry = {
   turn: number;
   scenarioId: string;
+  scenarioCategory: ScenarioCategory | string;
   scenarioTitle: string;
   choiceText: string;
   effect: ChoiceEffect;
@@ -81,6 +96,7 @@ export type GameConfig = {
   provider: AIProvider;
   apiKey: string;
   model: string;
+  comparisonCount: 0 | 2 | 3 | 4;
 };
 
 export type CustomChoiceRequest = {
@@ -90,4 +106,23 @@ export type CustomChoiceRequest = {
   turn: number;
   history: HistoryEntry[];
   traits: TraitScores;
+};
+
+export type PersonaProfile = {
+  id: string;
+  label: string;
+  description: string;
+  traits: TraitScores;
+};
+
+export type PersonaComparison = {
+  persona: PersonaProfile;
+  projectedEffect: ChoiceEffect;
+  projectedStats: Stats;
+  insight: string;
+};
+
+export type ChoiceComparison = {
+  choice: ChoiceOption;
+  comparisons: PersonaComparison[];
 };

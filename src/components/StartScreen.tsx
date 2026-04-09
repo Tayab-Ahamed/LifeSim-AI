@@ -28,6 +28,8 @@ const StartScreen: React.FC<StartScreenProps> = ({
   const [provider, setProvider] = useState<AIProvider>("openai");
   const [apiKey, setApiKey] = useState("");
   const [model, setModel] = useState(defaultModels.openai);
+  const [comparisonCount, setComparisonCount] =
+    useState<GameConfig["comparisonCount"]>(0);
 
   const handleProviderChange = (nextProvider: AIProvider) => {
     setProvider(nextProvider);
@@ -44,6 +46,7 @@ const StartScreen: React.FC<StartScreenProps> = ({
         provider,
         apiKey,
         model,
+        comparisonCount,
       },
     });
   };
@@ -111,6 +114,23 @@ const StartScreen: React.FC<StartScreenProps> = ({
         >
           <option value="local">Local rules engine</option>
           <option value="ai">AI-assisted understanding</option>
+        </select>
+
+        <label htmlFor="comparisonCount">Scenario comparison</label>
+        <select
+          id="comparisonCount"
+          name="comparisonCount"
+          value={comparisonCount}
+          onChange={(event) =>
+            setComparisonCount(
+              Number(event.target.value) as GameConfig["comparisonCount"]
+            )
+          }
+        >
+          <option value={0}>Off</option>
+          <option value={2}>2-person comparison</option>
+          <option value={3}>3-person comparison</option>
+          <option value={4}>4-person comparison</option>
         </select>
 
         {mode === "ai" && (
