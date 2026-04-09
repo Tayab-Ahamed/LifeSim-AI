@@ -1,0 +1,42 @@
+.game-output {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  top: 0;
+  margin-bottom: 1em;
+  height: 90vh;
+  width: 70vw;
+  padding: 0 1em 1em 1em;
+  /* overflow-y: hidden; */
+}
+
+.game-output-info {
+  display: flex;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 65px; /* Changed to auto */
+  background-color: black;
+  padding: 0.5rem 1rem;
+  box-sizing: border-box;
+  font-weight: bold;
+  z-index: 10;
+  flex-wrap: wrap; /* Added flex-wrap */
+}
+
+.game-output-info p:nth-child(1) {
+  flex: 1; /* Added flex property */
+  margin-left: 1rem; /* Replaced position and left with margin-left */
+}
+
+.game-output-info p:nth-child(2) {
+  flex: 1; /* Added flex property */
+  text-align: center; /* Replaced position and left with text-align */
+}
+
+.game-output-content {
+  position: relative; /* Add this line */
+  height: calc(100% - 65px); /* Add this line to set the height, 45px is the approximate height of .game-output-info */
+  overflow-y: auto; /* Add this line to make it scrollable */
+}

@@ -1,0 +1,143 @@
+/* Mobile styles */
+@media screen and (max-width: 768px) {
+  /* Adjusting the container for the app */
+  .app-container {
+    flex-direction: column;
+  }
+
+  /* Adjusting GameOutput and CharacterInfo */
+  .game-output,
+  .character-info {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  /* Adjusting GameOutput */
+  .game-output {
+    height:60vh;
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+  }
+
+  /* Adjusting CharacterSelection */
+  .character-info {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 20px;
+    margin-left: 0;
+    height: auto;
+    overflow-y: auto;
+  }
+
+  /* Adjusting UserInput */
+  .user-input {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+  }
+
+  .user-input input {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .user-input button {
+    width: 100%;
+  }
+
+  /* Adjusting CharacterInfo details */
+  .character-info .character-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .character-info .character-details h4,
+  .character-info .character-details ul,
+  .character-info .character-details p {
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .genre-selection-container button,
+  .character-selection-container button {
+    width: 100%; /* Set the button width to 100% on mobile devices */
+  }
+
+  /* Moving CharacterInfo below game-and-user-input */
+  .playing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .game-and-user-input {
+    order: 1;
+  }
+  
+  .user-input {
+    order: 2;
+  }
+  
+  .character-info {
+    order: 3;
+  }
+
+  .game-output-info {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap; /* Added to wrap elements to the next line */
+    align-items: flex-start;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    background-color: black;
+    padding: 0.5rem 1rem 0;
+    box-sizing: border-box;
+    z-index: 10;
+  }  
+  
+  .game-output-info p:nth-child(1) {
+    padding-top: 0;
+    margin-top: 0;
+    position: static;
+    width: 100%;
+  }
+
+  .game-output-info p:nth-child(2) {
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    text-align: left;
+    padding-left: 20px;
+    padding-bottom: 7px;
+    position: static;
+    width: 100%;
+  }
+  
+  
+  .options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Add this line */
+  }
+
+  .character-selection-container {
+    width: 90vw;
+  }
+
+  .api-wrapper {
+    width: 90vw;
+  }
+
+  .api-input {
+    width: 90%;
+  }
+}
+
+
+
+

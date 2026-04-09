@@ -1,0 +1,438 @@
+.wealthcraft-app {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1160px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+
+.background-glow {
+  position: fixed;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  filter: blur(10px);
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.background-glow--left {
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(46, 160, 67, 0.24), transparent 70%);
+}
+
+.background-glow--right {
+  top: -80px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(88, 166, 255, 0.18), transparent 70%);
+}
+
+.hero-shell {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  padding: 32px;
+  border: 1px solid rgba(139, 148, 158, 0.24);
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(46, 160, 67, 0.16), rgba(88, 166, 255, 0.06)),
+    rgba(17, 22, 29, 0.94);
+  box-shadow: 0 20px 60px rgba(1, 4, 9, 0.4);
+}
+
+.hero-shell h1,
+.hero-shell h2,
+.game-shell h2,
+.game-shell h3 {
+  margin-top: 0;
+}
+
+.hero-copy p,
+.hero-copy li,
+.muted-copy,
+.fine-print,
+.history-empty,
+.status-card span,
+.history-context,
+.loading-copy,
+.result-summary {
+  color: #9da7b3;
+}
+
+.hero-list {
+  padding-left: 20px;
+}
+
+.hero-list li + li {
+  margin-top: 8px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(46, 160, 67, 0.45);
+  background: rgba(46, 160, 67, 0.14);
+  color: #7ee787;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.hero-badge--soft {
+  border-color: rgba(88, 166, 255, 0.34);
+  background: rgba(88, 166, 255, 0.1);
+  color: #79c0ff;
+}
+
+.start-card,
+.panel-card,
+.result-shell,
+.choice-card {
+  border: 1px solid rgba(139, 148, 158, 0.22);
+  border-radius: 20px;
+  background: rgba(22, 27, 34, 0.92);
+  box-shadow: 0 20px 60px rgba(1, 4, 9, 0.25);
+}
+
+.start-card {
+  padding: 24px;
+}
+
+.start-card label {
+  display: block;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  color: #9da7b3;
+  font-size: 15px;
+}
+
+.start-card input,
+.start-card select {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(139, 148, 158, 0.22);
+  background: rgba(1, 4, 9, 0.45);
+  color: #e6edf3;
+  font: inherit;
+}
+
+.start-card input:focus,
+.start-card select:focus {
+  outline: 2px solid rgba(88, 166, 255, 0.42);
+  outline-offset: 1px;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+  padding: 13px 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #2ea043, #238636);
+  color: #f0fff4;
+}
+
+.secondary-button {
+  background: rgba(88, 166, 255, 0.1);
+  border-color: rgba(88, 166, 255, 0.24);
+  color: #e6edf3;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.choice-card:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.choice-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+.fine-print {
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.game-shell {
+  margin-top: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stat-card {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(139, 148, 158, 0.18);
+  background: rgba(22, 27, 34, 0.88);
+}
+
+.stat-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #9da7b3;
+}
+
+.stat-value {
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 18px;
+}
+
+.stat-card--positive .stat-value {
+  color: #7ee787;
+}
+
+.stat-card--warning .stat-value {
+  color: #ffa657;
+}
+
+.stat-card--danger .stat-value {
+  color: #ff7b72;
+}
+
+.stat-card--info .stat-value {
+  color: #79c0ff;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.panel-card,
+.result-shell {
+  padding: 20px;
+}
+
+.panel-kicker,
+.result-label,
+.history-turn,
+.choice-note,
+.effect-pill {
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+.panel-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #7ee787;
+}
+
+.scenario-copy {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.choice-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.choice-card {
+  width: 100%;
+  padding: 18px;
+  text-align: left;
+  color: #e6edf3;
+  cursor: pointer;
+}
+
+.choice-text {
+  display: block;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.choice-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.effect-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 12px;
+}
+
+.effect-pill--positive {
+  background: rgba(46, 160, 67, 0.16);
+  border-color: rgba(46, 160, 67, 0.34);
+  color: #7ee787;
+}
+
+.effect-pill--negative {
+  background: rgba(248, 81, 73, 0.14);
+  border-color: rgba(248, 81, 73, 0.24);
+  color: #ff7b72;
+}
+
+.choice-note {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #9da7b3;
+}
+
+.sidebar-stack,
+.status-stack,
+.history-list,
+.result-grid,
+.result-lower-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.status-card {
+  padding: 15px;
+  border-radius: 16px;
+  border: 1px solid rgba(139, 148, 158, 0.16);
+  background: rgba(1, 4, 9, 0.28);
+}
+
+.status-card strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.history-item {
+  padding-left: 12px;
+  border-left: 2px solid rgba(46, 160, 67, 0.42);
+}
+
+.history-turn {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7ee787;
+}
+
+.history-context {
+  display: block;
+  margin-top: 4px;
+}
+
+.result-shell {
+  margin-top: 18px;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.result-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 18px;
+}
+
+.result-card {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(139, 148, 158, 0.16);
+  background: rgba(1, 4, 9, 0.28);
+}
+
+.result-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #9da7b3;
+}
+
+.result-lower-grid {
+  grid-template-columns: 1fr 1.2fr;
+  margin-top: 16px;
+}
+
+.final-stats {
+  display: grid;
+  gap: 10px;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+@media (max-width: 980px) {
+  .hero-shell,
+  .dashboard-grid,
+  .result-grid,
+  .result-lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .result-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    width: min(100vw - 20px, 1160px);
+    padding: 20px 0 28px;
+  }
+
+  .hero-shell,
+  .panel-card,
+  .start-card,
+  .result-shell {
+    padding: 18px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .primary-button,
+  .secondary-button {
+    width: 100%;
+  }
+}
