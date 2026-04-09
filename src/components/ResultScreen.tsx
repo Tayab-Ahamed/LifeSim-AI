@@ -1,15 +1,14 @@
 import React from "react";
 import { FinalResult, HistoryEntry, Stats } from "../types/wealthcraft";
+import { formatMoney } from "../utils/formatMoney";
 
 type ResultScreenProps = {
   result: FinalResult;
   stats: Stats;
   history: HistoryEntry[];
-  onRestart: () => Promise<void>;
+  onRestart: () => void;
   isLoading: boolean;
 };
-
-const formatMoney = (value: number) => `Rs ${value.toLocaleString("en-IN")}`;
 
 const ResultScreen: React.FC<ResultScreenProps> = ({
   result,
@@ -48,6 +47,10 @@ const ResultScreen: React.FC<ResultScreenProps> = ({
         <article className="result-card">
           <span className="result-label">Advice</span>
           <p>{result.advice}</p>
+        </article>
+        <article className="result-card">
+          <span className="result-label">Behavior Pattern</span>
+          <p>{result.traitSummary}</p>
         </article>
       </div>
 

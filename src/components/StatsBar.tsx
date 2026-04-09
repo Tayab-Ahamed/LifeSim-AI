@@ -1,13 +1,12 @@
 import React from "react";
 import { Stats } from "../types/wealthcraft";
+import { formatMoney } from "../utils/formatMoney";
 
 type StatsBarProps = {
   stats: Stats;
   turn: number;
   maxTurns: number;
 };
-
-const formatMoney = (value: number) => `Rs ${value.toLocaleString("en-IN")}`;
 
 const StatsBar: React.FC<StatsBarProps> = ({ stats, turn, maxTurns }) => {
   const items = [

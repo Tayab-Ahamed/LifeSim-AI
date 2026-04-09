@@ -5,21 +5,24 @@ import ScenarioCard from "./components/ScenarioCard";
 import StartScreen from "./components/StartScreen";
 import StatsBar from "./components/StatsBar";
 import { useGameState } from "./hooks/useGameState";
-
-const formatMoney = (value: number) => `Rs ${value.toLocaleString("en-IN")}`;
+import { formatMoney } from "./utils/formatMoney";
 
 const App: React.FC = () => {
   const {
     phase,
     stats,
+    traits,
+    config,
     turn,
     history,
     scenario,
     result,
     isLoading,
+    error,
     maxTurns,
     startGame,
     chooseOption,
+    submitCustomChoice,
     restartGame,
   } = useGameState();
 
@@ -52,6 +55,40 @@ const App: React.FC = () => {
             : "Career growth needs attention.",
       body: "Growth choices improve earnings, but they can increase strain.",
     },
+    {
+      title: config.mode === "ai" ? "AI interpretation enabled." : "Local rules mode.",
+      body:
+        config.mode === "ai"
+          ? `${config.provider.toUpperCase()} is generating scenarios and interpreting custom choices.`
+          : "Scenarios and results are powered by the built-in local simulation engine.",
+    },
+  ];
+
+  const traitCards = [
+    {
+      label: "Ambition",
+      value: traits.ambition,
+    },
+    {
+      label: "Discipline",
+      value: traits.discipline,
+    },
+    {
+      label: "Balance",
+      value: traits.balance,
+    },
+    {
+      label: "Empathy",
+      value: traits.empathy,
+    },
+    {
+      label: "Adaptability",
+      value: traits.adaptability,
+    },
+    {
+      label: "Risk",
+      value: traits.risk,
+    },
   ];
 
   return (
@@ -60,7 +97,11 @@ const App: React.FC = () => {
       <div className="background-glow background-glow--right" />
 
       <main className="app-shell">
-        <StartScreen isLoading={isLoading && phase === "setup"} onStart={startGame} />
+        <StartScreen
+          isLoading={isLoading && phase === "setup"}
+          error={phase === "setup" ? error : ""}
+          onStart={startGame}
+        />
 
         {phase !== "setup" && (
           <section className="game-shell">
@@ -73,7 +114,9 @@ const App: React.FC = () => {
                   turn={turn}
                   maxTurns={maxTurns}
                   isLoading={isLoading}
+                  error={error}
                   onChoose={chooseOption}
+                  onCustomChoice={submitCustomChoice}
                 />
               ) : (
                 <section className="panel-card scenario-card">
@@ -122,6 +165,19 @@ const App: React.FC = () => {
                           <span className="history-context">{entry.scenarioTitle}</span>
                         </div>
                       ))}
+                  </div>
+                </section>
+
+                <section className="panel-card">
+                  <span className="panel-kicker">Hidden Profile</span>
+                  <h3>What the engine thinks about you</h3>
+                  <div className="trait-list">
+                    {traitCards.map((trait) => (
+                      <div key={trait.label} className="trait-row">
+                        <span>{trait.label}</span>
+                        <strong>{trait.value}/100</strong>
+                      </div>
+                    ))}
                   </div>
                 </section>
               </aside>

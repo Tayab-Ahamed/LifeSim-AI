@@ -1,20 +1,50 @@
 import React, { useState } from "react";
-import { StartingStyle } from "../types/wealthcraft";
+import { AIProvider, GameConfig, StartingStyle } from "../types/wealthcraft";
 
 type StartScreenProps = {
   isLoading: boolean;
-  onStart: (input: { nextPlayerName: string; nextStartingStyle: StartingStyle }) => Promise<void>;
+  error: string;
+  onStart: (input: {
+    nextPlayerName: string;
+    nextStartingStyle: StartingStyle;
+    nextConfig: GameConfig;
+  }) => Promise<void>;
 };
 
-const StartScreen: React.FC<StartScreenProps> = ({ isLoading, onStart }) => {
+const defaultModels: Record<AIProvider, string> = {
+  openai: "gpt-4.1-mini",
+  gemini: "gemini-2.5-flash",
+  qwen: "qwen-plus",
+};
+
+const StartScreen: React.FC<StartScreenProps> = ({
+  isLoading,
+  error,
+  onStart,
+}) => {
   const [playerName, setPlayerName] = useState("");
   const [startingStyle, setStartingStyle] = useState<StartingStyle>("balanced");
+  const [mode, setMode] = useState<GameConfig["mode"]>("local");
+  const [provider, setProvider] = useState<AIProvider>("openai");
+  const [apiKey, setApiKey] = useState("");
+  const [model, setModel] = useState(defaultModels.openai);
+
+  const handleProviderChange = (nextProvider: AIProvider) => {
+    setProvider(nextProvider);
+    setModel(defaultModels[nextProvider]);
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     await onStart({
       nextPlayerName: playerName,
       nextStartingStyle: startingStyle,
+      nextConfig: {
+        mode,
+        provider,
+        apiKey,
+        model,
+      },
     });
   };
 
@@ -39,10 +69,14 @@ const StartScreen: React.FC<StartScreenProps> = ({ isLoading, onStart }) => {
       </div>
 
       <form className="start-card" onSubmit={handleSubmit}>
-        <span className="hero-badge hero-badge--soft">No API Key Needed</span>
+        <span className="hero-badge hero-badge--soft">
+          {mode === "local" ? "No API Key Needed" : "AI Understanding Enabled"}
+        </span>
         <h2>Start a Run</h2>
         <p className="muted-copy">
-          This version is self-contained so the demo works instantly.
+          {mode === "local"
+            ? "Local mode works instantly with the built-in simulator."
+            : "AI mode uses a backend proxy so the model can understand the run and generate scenarios."}
         </p>
 
         <label htmlFor="playerName">Player name</label>
@@ -67,6 +101,55 @@ const StartScreen: React.FC<StartScreenProps> = ({ isLoading, onStart }) => {
           <option value="career">Career-first start</option>
           <option value="safety">Safety-first start</option>
         </select>
+
+        <label htmlFor="mode">Engine mode</label>
+        <select
+          id="mode"
+          name="mode"
+          value={mode}
+          onChange={(event) => setMode(event.target.value as GameConfig["mode"])}
+        >
+          <option value="local">Local rules engine</option>
+          <option value="ai">AI-assisted understanding</option>
+        </select>
+
+        {mode === "ai" && (
+          <>
+            <label htmlFor="provider">AI provider</label>
+            <select
+              id="provider"
+              name="provider"
+              value={provider}
+              onChange={(event) => handleProviderChange(event.target.value as AIProvider)}
+            >
+              <option value="openai">OpenAI GPT</option>
+              <option value="gemini">Google Gemini</option>
+              <option value="qwen">Qwen</option>
+            </select>
+
+            <label htmlFor="model">Model</label>
+            <input
+              id="model"
+              name="model"
+              type="text"
+              value={model}
+              onChange={(event) => setModel(event.target.value)}
+              placeholder={defaultModels[provider]}
+            />
+
+            <label htmlFor="apiKey">API key</label>
+            <input
+              id="apiKey"
+              name="apiKey"
+              type="password"
+              value={apiKey}
+              onChange={(event) => setApiKey(event.target.value)}
+              placeholder="Paste your provider API key"
+            />
+          </>
+        )}
+
+        {error && <p className="error-copy">{error}</p>}
 
         <button className="primary-button" type="submit" disabled={isLoading}>
           {isLoading ? "Preparing run..." : "Play LifeSim AI"}
