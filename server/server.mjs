@@ -3,6 +3,13 @@ import { createServer } from "node:http";
 import { URL } from "node:url";
 
 const port = Number(process.env.API_PORT || 8787);
+const host = process.env.API_HOST || "127.0.0.1";
+const allowedOrigins = new Set(
+  (process.env.API_ALLOWED_ORIGINS || "http://localhost:3000,http://127.0.0.1:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
 const allowedCategories = [
   "career",
   "housing",
@@ -22,7 +29,6 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, Math.round(Number
 const json = (res, status, body) => {
   res.writeHead(status, {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
   });
@@ -401,6 +407,13 @@ const routes = {
 };
 
 const server = createServer(async (req, res) => {
+  res.setHeader("Vary", "Origin");
+  const origin = req.headers.origin;
+  if (origin && !allowedOrigins.has(origin)) {
+    json(res, 403, { error: "Origin is not allowed." });
+    return;
+  }
+  if (origin) res.setHeader("Access-Control-Allow-Origin", origin);
   const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
 
   if (req.method === "OPTIONS") {
@@ -437,6 +450,6 @@ const server = createServer(async (req, res) => {
   }
 });
 
-server.listen(port, () => {
-  console.log(`LifeSim AI API listening on http://localhost:${port}`);
+server.listen(port, host, () => {
+  console.log(`LifeSim AI API listening on http://${host}:${port}`);
 });
