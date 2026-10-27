@@ -101,6 +101,10 @@ Available environment variables:
 - `QWEN_API_KEY`
 - `QWEN_BASE_URL`
 - `API_PORT`
+- `API_HOST` (defaults to `127.0.0.1` for local-only access)
+- `API_ALLOWED_ORIGINS` (comma-separated frontend origins; defaults to `http://localhost:3000,http://127.0.0.1:3000`)
+
+The provider proxy rejects browser requests from other origins before reading the request body or calling a provider. Set the frontend origin explicitly when using a different development URL. Local clients without an `Origin` header remain supported. Run the API regression checks with `npm run test:api`.
 
 ## Available AI Features
 

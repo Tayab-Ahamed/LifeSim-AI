@@ -23,9 +23,10 @@
     "start:api": "node server/server.mjs",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:api": "node --test server/server.test.mjs",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:8787",
+  "proxy": "http://127.0.0.1:8787",
   "eslintConfig": {
     "extends": [
       "react-app",
